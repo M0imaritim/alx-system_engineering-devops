@@ -1,2 +1,2 @@
 #!/bin/bash
-rsync -ur --ignore-existing *.html ../
+rsync -ur *.html ../

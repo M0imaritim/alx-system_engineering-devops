@@ -1,3 +1,4 @@
 #!/bin/bash
 find . -type d -name".*" -not -name '.' | wc -l
+
  

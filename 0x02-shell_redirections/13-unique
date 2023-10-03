@@ -1,3 +1,2 @@
 #!/bin/bash
-cat 'input' sort | uniq -u
-
+cat $input sort | uniq -u

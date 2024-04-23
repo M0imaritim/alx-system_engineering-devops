@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# install nginx on server
+
+sudo apt get
+sudo apt install -y nginx
+
+sudo sed -i 's/#listen80;listen 80;/g' etc/nginx/sites-available/default
+
+sudo echo "Hello World!" | sudo tee /var/www/html/index.html >/dev/null
+
+sudo service nginx restart

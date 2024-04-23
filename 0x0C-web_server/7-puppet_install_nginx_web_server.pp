@@ -3,7 +3,7 @@ package { 'nginx':
   ensure => installed,
 }
 file { '/etc/nginx/sites-available/default':
-  ensure  => present,
+  ensure      => present,
       content => "
       server {
         listen 80 default_server;

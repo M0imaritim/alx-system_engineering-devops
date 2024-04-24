@@ -18,7 +18,7 @@ file { '/etc/nginx/sites-available/default':
           return 200 'Hello World!';
         }
 
-        location = /redirect_me {
+        location /redirect_me {
           return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
         }
       }

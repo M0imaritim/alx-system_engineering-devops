@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# installs and configures Nginx with a custom header
+sudo apt-get update
+sudo apt-get install -y nginx
+
+sudo tee /etc/nginx/nginx.conf >/dev/null <<EOF
+events {
+    worker_connections 1024;
+}
+http {
+     add_header X-Served-By \$HOSTNAME;
+}
+EOF
+sudo service nginx restart

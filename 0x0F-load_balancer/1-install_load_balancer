@@ -3,6 +3,11 @@
 sudo apt-get -y update
 sudo apt-get install -y haproxy
 
-echo -e '\n frontend http_front\n\tbind *:80\n\tdefault_backend http_back\n\nbackend http_back\n\tbalance roundrobin\n\tserver 531455-web-01 54.145.240.184:80 check\n\tserver 531455-web-02 54.89.109.0:80 check' >>  /etc/haproxy/haproxy.cfg 
+tempfile=$(mktemp)
+
+echo -e '\n frontend http_front\n\tbind *:80\n\tdefault_backend http_back\n\nbackend http_back\n\tbalance roundrobin\n\tserver 531455-web-01 54.145.240.184:80 check\n\tserver 531455-web-02 54.89.109.0:80 check' >> "$tempfile"
+
+sudo cp "$tempfile" /etc/haproxy/haproxy.cfg
 sudo systemctl restart haproxy
 sudo systemctl enable haproxy
+sudo rm "$tempfile"

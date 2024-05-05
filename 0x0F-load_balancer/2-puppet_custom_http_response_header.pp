@@ -1,27 +1,23 @@
 # Configures a brand new ubuntu machine
 
-exec{'update':
+exec{ 'update':
   provider => shell,
   command  => 'sudo apt-get -y update',
   before   => Exec['install Nginx'],
 }
-exec {'install Nginx':
+exec { 'install Nginx':
   provider => shell,
-  command  => 'sudo apt-get -y install nginx'
-  require  => Exec['update']
+  command  => 'sudo apt-get -y install nginx',
+  before   => Exec['add_header'],
 }
 
-$server_hostname = $facts['networking']['hostname']
-$custom_header_value = "X-Served-By: ${server_hostname}"
-
-file { '/etc/nginx/conf.d/custom_header.conf':
-  ensure  => present,
-  content => "add_header ${custom_header_value};\n",
-  notify  => Service['nginx'],
+exec { 'add_header':
+  provide     => shell,
+  environment => ["HOST=${hostname}"],
+  command     => 'sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOST\";/" /etc/nginx/nginx.conf',
+  before      => Exec['restart_Nginx'],
 }
-
-service { 'nginx':
-  ensure  => running,
-  enable  => true,
-  require => File['/etc/nginx/conf.d/custom_header.conf'],
+exec { 'restart_Nginx':
+  provider => shell,
+  command  => 'sudo service nginx restart',
 }

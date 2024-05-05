@@ -12,9 +12,9 @@ exec { 'install Nginx':
 }
 
 exec { 'add_header':
-  provide     => shell,
-  environment => ["HOST=${hostname}"],
-  command     => 'sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOST\";/" /etc/nginx/nginx.conf',
+  provider     => shell,
+  environment  => ["HOST=${hostname}"],
+  command      => 'sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOST\";/" /etc/nginx/nginx.conf',
   before      => Exec['restart_Nginx'],
 }
 exec { 'restart_Nginx':

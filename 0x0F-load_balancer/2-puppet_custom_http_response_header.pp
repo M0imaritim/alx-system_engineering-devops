@@ -5,8 +5,9 @@ exec{'update':
   command  => 'sudo apt-get -y update',
   before   => Exec['install Nginx'],
 }
-package { 'nginx':
-  ensure => installed,
+exec {'install Nginx':
+  provider => shell,
+  command  => 'sudo apt-get -y install nginx'
 }
 
 $server_hostname = $facts['networking']['hostname']

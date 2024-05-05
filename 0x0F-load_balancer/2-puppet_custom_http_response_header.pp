@@ -8,6 +8,7 @@ exec{'update':
 exec {'install Nginx':
   provider => shell,
   command  => 'sudo apt-get -y install nginx'
+  require  => Exec['update']
 }
 
 $server_hostname = $facts['networking']['hostname']

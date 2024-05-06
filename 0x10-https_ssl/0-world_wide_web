@@ -5,7 +5,7 @@
 get_record_info() {
     if [ -n "$2" ]
     then
-	dig  "$1" | grep -A1 'ANSWER SECTION:' | paste -- | awk -v sb="$2" 'END {print "The subdomain " sb " is a " $4 " record and points to " $5 ""}'
+	dig  "$2.$1" | grep -A1 'ANSWER SECTION:' | paste -- | awk -v sb="$2" 'END {print "The subdomain " sb " is a " $4 " record and points to " $5 ""}'
     else
 	dig "www.$1" |  grep -A1 'ANSWER SECTION:' | paste -- | awk 'END {print "The subdomain www is a " $4 " record and points to " $5 ""}'
 	dig "lb-01.$1" |  grep -A1 'ANSWER SECTION:' | paste -- | awk 'END {print "The subdomain lb-01 is a " $4 " record and points to " $5 ""}'

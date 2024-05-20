@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 """Module contains function to gather data from API"""
-import sys
 import requests
+import sys
 
 
 def gather_employee_todo_progress(employee_id):
+    """gathers API data"""
     try:
         # Get employee details
         user_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"

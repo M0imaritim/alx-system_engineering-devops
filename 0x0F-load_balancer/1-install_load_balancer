@@ -1,13 +1,59 @@
 #!/usr/bin/env bash
 # installs and configures HAproxy on lb-01
-sudo apt-get -y update
-sudo apt-get install -y haproxy
 
-tempfile=$(mktemp)
+# Update system and install HAProxy
+echo "Updating system and installing HAProxy..."
+sudo apt update && sudo apt install -y haproxy
 
-echo -e '\n frontend http_front\n\tbind *:80\n\tdefault_backend http_back\n\nbackend http_back\n\tbalance roundrobin\n\tserver 531455-web-01 35.153.18.12:80 check\n\tserver 531455-web-02 52.3.243.162:80 check' >> "$tempfile"
+# Backup the original configuration
+sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
 
-sudo cp "$tempfile" /etc/haproxy/haproxy.cfg
+# Configure HAProxy
+echo "Configuring HAProxy..."
+sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOL
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    timeout connect 5s
+    timeout client 50s
+    timeout server 50s
+
+frontend http_front
+    bind *:80
+    default_backend web_servers
+
+backend web_servers
+    balance roundrobin
+    server 531455-web-01 35.153.18.12:80 check
+    server 531455-web-02 52.3.243.162:80 check
+
+listen stats
+    bind *:8080
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats auth admin:admin
+EOL
+
+# Restart HAProxy to apply changes
+echo "Restarting HAProxy..."
 sudo systemctl restart haproxy
 sudo systemctl enable haproxy
-sudo rm "$tempfile"
+
+# Verify HAProxy status
+echo "Checking HAProxy status..."
+sudo systemctl status haproxy --no-pager
+
+echo "HAProxy setup completed successfully!"

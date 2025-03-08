@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#reloads gunicorn with little or no downtime
+
+PID_FILE="/run/hbnb/hbnb.pid"
+
+if [ -f "$PID_FILE" ]; then
+    PID=$(cat "$PID_FILE")
+        
+    kill -HUP "$PID"
+    
+    sleep 2
+    if ps -p "$PID" > /dev/null; then
+        echo "Gunicorn reloaded successfully!"
+    else
+        sudo systemctl restart gunicorn
+        if systemctl is-active --quiet gunicorn; then
+            echo "Gunicorn restarted successfully!"
+        else
+            echo "Failed to restart Gunicorn. Check logs for errors."
+        fi
+    fi
+else
+    echo "Gunicorn is not running. Starting service..."
+    sudo systemctl start gunicorn
+fi

@@ -20,6 +20,5 @@ if [ -f "$PID_FILE" ]; then
         fi
     fi
 else
-    echo "Gunicorn is not running. Starting service..."
     sudo systemctl start gunicorn
 fi
